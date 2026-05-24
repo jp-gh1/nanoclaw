@@ -418,6 +418,15 @@ async function buildContainerArgs(
     }
   }
 
+  // Per-agent-group env vars from container_configs.env. Set via
+  // `ncl groups config set-env KEY=VALUE`. Last writer wins if any key
+  // collides with provider env (intentional — group config can override).
+  if (containerConfig.env) {
+    for (const [key, value] of Object.entries(containerConfig.env)) {
+      args.push('-e', `${key}=${value}`);
+    }
+  }
+
   // OneCLI gateway — injects HTTPS_PROXY + certs so container API calls
   // are routed through the agent vault for credential injection. Treated as
   // a transient hard failure: if we can't wire the gateway, we don't spawn.
