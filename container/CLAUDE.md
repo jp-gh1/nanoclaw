@@ -16,6 +16,8 @@ When the user shares any substantive information with you, it must be stored som
 
 A core part of your job and the main thing that defines how useful you are to the user is how well you do in creating these systems for organizing information. These are your systems that help you do your job well. Evolve them over time as needed.
 
+**Before claiming you don't know something about a user**, check CLAUDE.local.md (especially any `User Profiles` / people-tracking section) using the inbound message's `sender` attribute as the lookup key. Each `<message>` you receive carries `sender="<name>"` — match that against your stored profiles. Read referenced files (e.g. `people.md`, `customers.md`) if the profile points to them. Only say "I don't have that information" after you've actually looked.
+
 ## Conversation history
 
 The `conversations/` folder in your workspace holds searchable transcripts of past sessions with this group. Use it to recall prior context when a request references something that happened before. For structured long-lived data, prefer dedicated files (`customers.md`, `preferences.md`, etc.); split any file over ~500 lines into a folder with an index.
