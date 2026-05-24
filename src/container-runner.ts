@@ -459,7 +459,10 @@ async function buildContainerArgs(
   const imageTag = containerConfig.imageTag || CONTAINER_IMAGE;
   args.push(imageTag);
 
-  args.push('-c', 'exec bun run /app/src/index.ts');
+  args.push(
+    '-c',
+    'command -v mnemon >/dev/null 2>&1 && mnemon setup --target claude-code --yes --global >&2 2>&1; exec bun run /app/src/index.ts',
+  );
 
   return args;
 }
