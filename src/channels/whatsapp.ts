@@ -562,9 +562,15 @@ registerChannelAdapter('whatsapp', {
               normalized.videoMessage?.caption ||
               '';
 
-            // Normalize bot LID mention → assistant name for trigger matching
+            // Normalize bot LID/phone mention → assistant name for trigger matching
             if (botLidUser && content.includes(`@${botLidUser}`)) {
               content = content.replace(`@${botLidUser}`, `@${ASSISTANT_NAME}`);
+            }
+            if (botPhoneJid) {
+              const phoneUser = botPhoneJid.split('@')[0];
+              if (content.includes(`@${phoneUser}`)) {
+                content = content.replace(`@${phoneUser}`, `@${ASSISTANT_NAME}`);
+              }
             }
 
             // Download media attachments (images, video, audio, documents)
@@ -587,9 +593,14 @@ registerChannelAdapter('whatsapp', {
             // filter is correct since the user's phone messages shouldn't wake
             // the agent in third-party conversations.
             if (fromMe) {
-              const isSelfChat = botPhoneJid && chatJid === botPhoneJid;
-              if (!isSelfChat) continue;
+              // Always skip the bot's own outgoing echoes.
               if (sentMessageCache.has(msg.key.id || '')) continue;
+              // For DMs on other numbers: skip (user's phone messages in
+              // third-party 1:1 chats shouldn't wake the agent).
+              // For groups: allow — the operator uses their own number and
+              // may want to address the bot in a group they share.
+              const isSelfChat = botPhoneJid && chatJid === botPhoneJid;
+              if (!isSelfChat && !isGroup) continue;
             }
 
             const isBotMessage = ASSISTANT_HAS_OWN_NUMBER ? false : content.startsWith(`${ASSISTANT_NAME}:`);
