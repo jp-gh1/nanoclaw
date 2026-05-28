@@ -373,7 +373,7 @@ function evaluateEngage(
       const pat = agent.engage_pattern ?? '.';
       if (pat === '.') return true;
       try {
-        return new RegExp(pat).test(text);
+        return new RegExp(pat, 'i').test(text);
       } catch {
         // Bad regex: fail open so admin sees the agent responding + can fix.
         return true;
